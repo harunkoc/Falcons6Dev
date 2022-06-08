@@ -1,10 +1,16 @@
 public class AnimalsCallouts {
-    public static void fetcAnimals(){
+
+    private static string GET_ANIMALS_ENDPOINT = calloutInfo__mdt.getInstance('GET_ANIMALS').endpoint__c;
+    private static string POST_ANIMALS_ENDPOINT = calloutInfo__mdt.getInstance('POST_ANIMALS').endpoint__c;
+    private static string HTTP_GET= 'GET';
+    private static string HTTP_POST= 'POST';
+         
+    public static void fetchAnimals(){
 
         //1. Prepare request
         HttpRequest request = new HttpRequest();
-        request.setEndpoint('https://th-apex-http-callout.herokuapp.com/animals');
-        request.setMethod('GET');
+        request.setEndpoint(GET_ANIMALS_ENDPOINT);
+        request.setMethod(HTTP_GET);
 
 
         //2. prepare http
@@ -39,8 +45,8 @@ public class AnimalsCallouts {
 
         //1. Prepare request
         HttpRequest request = new HttpRequest();
-        request.setEndpoint('https://th-apex-http-callout.herokuapp.com/animals');
-        request.setMethod('GET');
+        request.setEndpoint(GET_ANIMALS_ENDPOINT);
+        request.setMethod(HTTP_GET);
 
 
         //2. prepare http
@@ -61,8 +67,44 @@ public class AnimalsCallouts {
                
            }
         } else{
+            string result = 'Failed';
             system.debug('something went wrong');
         }
+        return response;
+    }
+
+    public static HttpResponse postAnimal() {
+        //1. prepare request
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint(POST_ANIMALS_ENDPOINT);
+        request.setMethod(HTTP_POST);
+        string jsonReq = '{"name":"fluffykins"}';
+        request.setBody(jsonReq);
+        request.setHeader('Content-Type', 'application/json');
+
+        //2. prepare http
+        Http http = new http();
+
+        //3. send request, receive response
+        HttpResponse response = http.send(request);
+        system.debug('status ' + response.getStatus());
+        system.debug('status code ' + response.getStatusCode());
+        //4. process the response
+        if (response.getStatusCode() == 201) {
+            system.debug('response ' + response.getBody());
+            AnimalsCalloutResponce animalresponse = (AnimalsCalloutResponce)JSON.deserialize(response.getBody(),AnimalsCalloutResponce.class);
+            system.debug('====STRING animals list START ======');
+            list<string> allAnimals = animalResponse.animals;
+            for (string a : allAnimals) {
+                system.debug(a);
+            }
+            system.debug('====STRING animals list END ======');
+
+        } else {
+            string result = 'failed';
+            system.debug('something went wrong people');
+        }
+
         return response;
     }
 }
