@@ -1,5 +1,5 @@
 public class USAInformation {
-    public static void fetcInfoUSA(){
+    public static HttpResponse fetcInfoUSA(){
 
         httprequest request = new HttpRequest();
         request.setEndpoint('https://datausa.io/api/data?drilldowns=Nation&measures=Population');
@@ -27,8 +27,10 @@ public class USAInformation {
         } else{
             system.debug('something went wrong');
         }
+        return response;
 
         }
+     
 
     }
     

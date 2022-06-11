@@ -20,6 +20,19 @@ public with sharing class DummyPostCallout {
             system.debug(response.getBody());
             DummyPostResponseWrapper dummywrapper= (DummyPostResponseWrapper)Json.deserialize(response.getBody(), DummyPostResponseWrapper.class);
             system.debug('Dummy = ' + dummywrapper);
+            list<post__c> listPost = new list<post__c>();
+            List<DummyPostResponseWrapper.Cls_Post> listClsPost = dummywrapper.posts;
+            for (DummyPostResponseWrapper.Cls_Post dpost: listClsPost) {
+                post__c p = new post__c();
+                p.id__c = dpost.id;
+                p.title__c= dpost.title;
+                p.body__c = dpost.body;
+                p.userID__c =dpost.userID;
+                p.tags__c = dpost.tags.toString();
+                listPost.add(p);
+                
+            }
+            upsert listPost id__c;
         } else {
             system.debug(response.getStatus());
         }
